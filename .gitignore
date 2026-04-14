@@ -1,0 +1,11 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+
+# Node
+node_modules/
+
+# IDE
+.idea/
