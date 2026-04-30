@@ -2,7 +2,7 @@ import time
 from pynput.keyboard import Controller, Key
 
 key_mai = 'c'
-key_chu = 'a' # placeholder
+key_chu = 'z'
 
 t_mai = 400 # should always be less than t_chu
 t_chu = 3333
@@ -16,9 +16,10 @@ def busy_wait(ms):
 
 def start():
         keyboard.press(key_chu)
+        busy_wait(20)
         keyboard.release(key_chu)
 
-        busy_wait(t_chu - t_mai)
+        busy_wait(t_chu - t_mai-20)
         print("waited for " + str(t_chu - t_mai) + " ms")
 
         keyboard.press(key_mai)
