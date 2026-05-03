@@ -1,5 +1,7 @@
 import time
 from pynput.keyboard import Controller, Key
+# syncstart.py generates inputs that will start Maimai and Chunithm game with a time difference. The inputs should be
+# mirrored to both machines through Input Director.
 
 key_mai = 'c'
 key_chu = 'z'
