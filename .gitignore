@@ -2,10 +2,16 @@
 .venv/
 __pycache__/
 *.pyc
+*.pyo
 db.sqlite3
+
+# Django
+*.log
+media/
 
 # Node
 node_modules/
 
 # IDE
 .idea/
+.vscode/

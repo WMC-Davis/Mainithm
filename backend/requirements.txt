@@ -1,0 +1,2 @@
+﻿Django==5.2.8
+djangorestframework==3.17.1
