@@ -43,6 +43,11 @@ Mainithm/
 │   ├── mainithm_backend/  # Django project config (settings, urls, wsgi, asgi)
 │   ├── sync/              # DRF app for timing data
 │   └── requirements.txt
+├── clients/             # Measurement & automation clients
+│   ├── dt_measurement.py    # Audio onset detection (librosa)
+│   ├── arcade_controller.py # Arcade control + measurement flow
+│   ├── data/                # CSV measurement output
+│   └── requirements.txt
 ├── frontend/            # Svelte web UI (planned)
 ├── docs/
 │   ├── explanation/
@@ -87,6 +92,7 @@ python manage.py runserver
 Each component has its own `requirements.txt`:
 
 - `controller/requirements.txt`: pynput, pywin32
+- `clients/requirements.txt`: pynput, sounddevice, librosa, numpy
 - `backend/requirements.txt`: Django, djangorestframework
 
 ## Common Gotchas
