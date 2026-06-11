@@ -1,0 +1,69 @@
+{
+  "songs_csv": "shared_songs.example.csv",
+  "output_dir": "runs",
+  "max_tracks": 99,
+  "max_selection_moves": 600,
+  "ocr": {
+    "enabled": true,
+    "engine": "easyocr",
+    "languages": ["ja", "en"],
+    "gpu": false,
+    "title_region": {
+      "left": 450,
+      "top": 95,
+      "width": 1020,
+      "height": 150
+    },
+    "poll_interval_s": 0.45,
+    "min_match_score": 82,
+    "stable_reads": 2,
+    "unknown_retry_limit": 3
+  },
+  "keyboard": {
+    "start_key": "c",
+    "next_key": "d",
+    "skip_keys": ["e", "d", "q", "a"],
+    "press_ms": 35,
+    "combo_hold_ms": 80
+  },
+  "timing": {
+    "recording_start_warmup_s": 3.0,
+    "selection_settle_s": 0.8,
+    "after_next_wait_s": 1.0,
+    "song_play_window_s": 30.0,
+    "after_skip_wait_s": 8.0
+  },
+  "marker": {
+    "enabled": true,
+    "frequency_hz": 15000,
+    "duration_ms": 60
+  },
+  "obs": {
+    "enabled": false,
+    "host": "localhost",
+    "port": 4455,
+    "password": "",
+    "stop_recording_at_end": true
+  },
+  "analysis": {
+    "sample_rate": 48000,
+    "mode": "peak",
+    "ignore_after_start_s": 7.0,
+    "countdown_search_start_s": 3.5,
+    "countdown_search_end_s": 16.0,
+    "post_countdown_silence_s": 0.25,
+    "skip_guard_s": 1.0,
+    "rms_window_ms": 50,
+    "rms_hop_ms": 10,
+    "peak_pick_ratio": 0.985,
+    "manual_review_if_peak_after_s": 25.0,
+    "manual_review_if_peak_to_median_under": 3.0,
+    "marker_detection": {
+      "enabled": true,
+      "fft_window": 2048,
+      "fft_hop": 512,
+      "min_gap_s": 5.0,
+      "threshold_sigma": 8.0
+    }
+  }
+}
