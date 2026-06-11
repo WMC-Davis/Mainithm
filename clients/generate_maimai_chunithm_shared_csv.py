@@ -7,8 +7,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from generate_chunithm_songs_csv import fetch_aliases as fetch_chunithm_aliases
-from generate_maimai_master_csv import fetch_aliases as fetch_maimai_aliases
+from clients.generate_chunithm_songs_csv import fetch_aliases as fetch_chunithm_aliases
+from clients.generate_maimai_master_csv import fetch_aliases as fetch_maimai_aliases
 
 
 MAIMAI_DATA_URL = "https://dp4p6x0xfi5o9.cloudfront.net/maimai/data.json"
