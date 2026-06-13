@@ -38,11 +38,28 @@ OCR 适合做“辅助定位”，不适合作为唯一真相。建议：
 
 ## 文件
 
+### 测量流水线
+
 - `mai_delay_measure.py`：控制键盘、OCR 选歌、OBS 开停录制、逐首开歌和跳过。
 - `analyze_recording.py`：从 OBS 视频里抽音频并按日志分析每首歌的锚点延迟。
+- `measurement_app.py`：Tkinter GUI 工具，整合生成曲库、检查环境、试跑/正式测量、录像分析的完整流程。
 - `config.example.json`：测量配置模板。
 - `shared_songs.example.csv`：共有歌曲表格式示例。
-- `requirements-measurement.txt`：测量脚本依赖。
+- `requirements.txt`：测量脚本依赖。
+
+### 曲库生成脚本
+
+以下三个脚本从外部社区 API 拉取最新的歌曲数据并生成 CSV 文件。
+
+- `generate_maimai_master_csv.py`：从 [zetaraku/arcade-songs](https://dp4p6x0xfi5o9.cloudfront.net/maimai/data.json) 拉取舞萌全曲数据，从 [yuzuchan](https://www.yuzuchan.moe/api/v2/aliases/maimaidx/aliases) 和 [lxns](https://maimai.lxns.net) 拉取别名，只保留 Master 难度谱面，输出 `maimai_master_songs.csv`。
+- `generate_chunithm_songs_csv.py`：从 [zetaraku/arcade-songs](https://dp4p6x0xfi5o9.cloudfront.net/chunithm/data.json) 拉取中二全曲数据，从 [AmethystTim/chunithm-alias](https://github.com/AmethystTim/chunithm-alias) 拉取别名，输出 `chunithm_songs.csv`。
+- `generate_maimai_chunithm_shared_csv.py`：用上面两个脚本的数据源，按标题匹配两个游戏的共有曲目（排除宴会場和 WORLD'S END），合并两侧的 ID、谱面、BPM、别名等信息，输出 `maimai_chunithm_shared_songs.csv`。这个 CSV 是测量流水线的输入，`measurement_app.py` 会从中生成测量用的 `shared_songs.csv`。
+
+### 开发中 / 辅助文件
+
+- `dt_measurement.py`：延迟测量核心函数（WIP，目前返回占位值）。
+- `dt_sample.py`：通过 Stereo Mix 录制系统音频并用 librosa 检测 onset 的实时测量方案。
+- `temp.py`：临时脚本，列出可用音频设备。
 
 ## 典型流程
 

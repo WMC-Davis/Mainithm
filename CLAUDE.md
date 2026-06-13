@@ -1,65 +1,76 @@
-# CLAUDE.md - Technical Notes for Mainithm
+# 这是项目 Mainithm 的 CLAUDE.md
 
-This file contains technical details, architectural decisions, and important implementation notes for future development sessions.
+## 此项目
 
-## Project Overview
+Mainithm 是一个用于实现舞萌和中二节奏手台拼机的项目
+目前完成的部分:
+- MVP, 位于 controller/
 
-Mainithm (Maimai + Chunithm) is a rhythm game sync-start utility. The core problem: two arcade rhythm games need to start at precisely the same time, but their attract screens and boot sequences have different timing offsets. The tool automates keypress sequences with sub-millisecond precision to synchronize them.
+正在做的部分
+- 延迟的自动测量和数据库
 
-The project is in MVP stage. The `controller/syncstart.py` script is the only functional component. A Django REST backend (`backend/`) is scaffolded for a future API that manages timing measurement data.
+## 项目目录
+controller/文件夹中有可工作的MVP, 能够使舞萌和中二上的特定的一首乐曲(Tiamat)同步启动, 用了input director
 
-## Architecture
-
-### `controller/syncstart.py` — Core Logic
-
-- Uses `pynput.keyboard` to simulate physical key presses
-- Presses key `'z'` (Chunithm trigger) first, holds for ~20ms, then after a calculated delay presses key `'c'` (Maimai trigger)
-- The delay between keys = `t_chunithm - t_maimai - 20ms`, where `t_chunithm` and `t_maimai` are the boot-to-gameplay timing offsets for each cabinet
-- Uses **busy-wait loops** (CPU polling) instead of `time.sleep()` for precision — `sleep` has OS scheduler jitter of ~15ms on Windows, which is unacceptable for sync accuracy
-- InputDirector integration: keys are sent via InputDirector to control multiple machines from one keyboard
-
-### Django REST Backend (`backend/`)
-
-- Django 5.2.8 + Django REST Framework 3.17.1
-- Project config: `backend/mainithm_backend/`
+backend/ 在服务器上运行的Django 后端项目
+- Django 5.2.8 + DRF 3.17.1
+- Django 项目配置: `backend/mainithm_backend/`
 - DRF app: `backend/sync/`
-- Purpose: manage delta-t data (time between pressing game start and track starting) for both Maimai and Chunithm
-- API to add new measurement data (from delay measurer clients)
-- API to retrieve data (for the Svelte web UI)
+- 目前的用途: 储存和管理Maimai 和Chunithm 的乐曲的按下开始键和音乐中的特征的时间差
+- 增加新测量到的数据的API
+- 给Web 前端用的API
 
-### Frontend (planned)
+frontend/ 计划中的基于Svelte 的WebUI
 
-- Svelte web UI in `frontend/` — later phase of development
+docs/ 文档
 
-### Project Structure
+clients/ 延迟测量客户端和曲库生成工具
+- 测量流水线: OCR 选歌 -> 开歌 -> OBS 录制 -> 离线音频分析 -> 输出 press-to-anchor 延迟
+- 曲库生成: 从外部 API 拉取舞萌/中二歌曲数据, 生成共有曲目 CSV
+- 有 Tkinter GUI (`measurement_app.py`) 和命令行两种使用方式
+- 详细文档见 `clients/README.md`
 
 ```
 Mainithm/
-├── controller/          # Hardware automation
-│   ├── syncstart.py     # Keyboard sync-start script (working MVP)
+├── controller/
+│   ├── syncstart.py     # 依赖配置好的input director 的MVP
 │   └── requirements.txt
 ├── backend/             # Django REST API
 │   ├── manage.py
-│   ├── mainithm_backend/  # Django project config (settings, urls, wsgi, asgi)
-│   ├── sync/              # DRF app for timing data
+│   ├── mainithm_backend/  # Django 项目配置
+│   ├── sync/              # 管理时间差数据的DRF 应用
 │   └── requirements.txt
-├── clients/             # Measurement & automation clients
-│   ├── dt_measurement.py    # Audio onset detection (librosa)
-│   ├── arcade_controller.py # Arcade control + measurement flow
-│   ├── data/                # CSV measurement output
+├── clients/                              # 延迟测量客户端
+│   ├── mai_delay_measure.py              # 舞萌测量主控: OCR选歌、键盘控制、OBS录制
+│   ├── analyze_recording.py              # 离线分析OBS录像, 计算 press-to-anchor 延迟
+│   ├── measurement_app.py                # Tkinter GUI, 整合测量和分析流程
+│   ├── dt_measurement.py                 # 延迟测量核心函数 (WIP)
+│   ├── dt_sample.py                      # 实时音频录制和 onset 检测 (librosa)
+│   ├── generate_maimai_master_csv.py     # 从外部API生成舞萌Master谱面CSV
+│   ├── generate_chunithm_songs_csv.py    # 从外部API生成中二全曲CSV
+│   ├── generate_maimai_chunithm_shared_csv.py  # 生成两游戏共有曲目CSV
+│   ├── config.example.json               # 测量配置模板
+│   ├── shared_songs.example.csv          # 共有曲目CSV格式示例
+│   ├── maimai_master_songs.csv           # 生成的舞萌曲库
+│   ├── chunithm_songs.csv               # 生成的中二曲库
+│   ├── maimai_chunithm_shared_songs.csv  # 生成的共有曲库
+│   ├── shared_songs.csv                  # 测量用曲库 (从shared生成)
+│   ├── temp.py                           # 临时: 列出音频设备
+│   ├── README.md                         # 测量流水线详细文档
 │   └── requirements.txt
-├── frontend/            # Svelte web UI (planned)
+├── frontend/            # 计划中的Svelte webUI
 ├── docs/
 │   ├── explanation/
-│   │   ├── Mainithm.md              # Development log
-│   │   └── Mainithm_Roadmap_Phase1.md  # Phase 1 roadmap
+│   │   ├── Mainithm.md               # 开发日志
+│   │   └── Mainithm_Roadmap_Phase1.md  # 本阶段开发路线
 │   ├── howto/
 │   └── reference/
+│       └── song_csv_generators.md     # 曲库生成脚本的数据源和用法说明
 ├── .gitignore
 └── CLAUDE.md
 ```
 
-## Key Design Decisions
+## 决策记录
 
 ### Busy-Wait for Timing Precision
 
@@ -73,7 +84,7 @@ Chunithm is started first (key `'z'`) because its boot-to-gameplay time is longe
 
 The script sends keys through InputDirector (a KVM-over-LAN tool) to control separate arcade cabinets from one PC. Key presses are not sent to the local machine's focused window — they go to the InputDirector target machine.
 
-## Running the Project
+## 运行项目
 
 **Sync-start script:**
 ```bash
@@ -87,9 +98,9 @@ cd backend
 python manage.py runserver
 ```
 
-## Dependencies
+## 依赖项
 
-Each component has its own `requirements.txt`:
+每个部分有各自的requirements.txt
 
 - `controller/requirements.txt`: pynput, pywin32
 - `clients/requirements.txt`: pynput, sounddevice, librosa, numpy
@@ -97,8 +108,5 @@ Each component has its own `requirements.txt`:
 
 ## Common Gotchas
 
-1. Timing constants are cabinet-specific — `t_chunithm` and `t_maimai` values in `syncstart.py` must be measured and calibrated per physical setup
-2. Busy-wait pegs one CPU core — expected and intentional, do not replace with `sleep`
-3. InputDirector must be running — the script assumes InputDirector is active and the target machines are connected; it will silently send keys to the wrong target otherwise
-4. Windows only — `pywin32` and the InputDirector integration are Windows-specific
-5. Say: 'Meow' everytime you finish editing code.
+1. 每次修改代码之后说 '喵'
+2. 使用Svelte 时始终遵循Svelte 5 标准
