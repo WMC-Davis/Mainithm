@@ -145,3 +145,8 @@ maimai_song (FK), chunithm_song (FK), delay_ms — 联合唯一约束
 
 序列化器就是最简单的全部序列化
 视图函数用mixin拼的, 给了默认的增改查功能
+
+8.15
+修改了视图和序列化器, 现在get舞萌和中二曲目不再会返回自增主键, 因为我现在不准备让客户端用自增主键, 前端和客户端想要定位它们应该使用song_id
+延迟差还是用主键定义身份。延迟差的外键还是由舞萌和中二曲目的自增主键定义, 这是默认的行为。但API收发的延迟差里现在只有两边曲目的song_id, 这是用slug_field实现的
+给延迟差的视图增加了get_queryset, 所以现在可以用 GET /api/delays/?maimai_song=11663&chunithm_song=2045 获取延迟差的id和数据

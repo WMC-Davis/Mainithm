@@ -6,16 +6,24 @@ from .models import MaimaiSong, ChunithmSong, DelayDifference
 class MaimaiSongSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaimaiSong
-        fields = '__all__'
+        exclude = ['id']
 
 
 class ChunithmSongSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChunithmSong
-        fields = '__all__'
+        exclude = ['id']
 
 
 class DelayDifferenceSerializer(serializers.ModelSerializer):
+
+    maimai_song = serializers.SlugRelatedField(
+        slug_field='song_id', queryset=MaimaiSong.objects.all()
+    )
+    chunithm_song = serializers.SlugRelatedField(
+        slug_field='song_id', queryset=ChunithmSong.objects.all()
+    )
+
     class Meta:
         model = DelayDifference
         fields = '__all__'
